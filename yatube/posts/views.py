@@ -4,12 +4,11 @@ from .models import Post, Group, User, Follow
 from .forms import PostForm, CommentForm
 from django.shortcuts import redirect
 from django.core.paginator import Paginator
-from django.views.decorators.cache import cache_page
 
 
 text_output: int = 10
 
-#@cache_page(20, key_prefix='index_page' )
+
 def index(request):
     template = 'posts/index.html'
     post_list = Post.objects.all()
@@ -40,6 +39,7 @@ def group_posts(request, slug):
         'posts': posts
     }
     return render(request, template, context)
+
 
 @login_required
 def post_delete(request, post_id):
@@ -138,6 +138,7 @@ def follow_index(request):
         }
     return render(request, template, context)
 
+
 @login_required
 def profile_follow(request, username):
     author = get_object_or_404(User, username=username)
@@ -148,9 +149,10 @@ def profile_follow(request, username):
             'posts:profile',
             username=username
         )
-    return redirect('posts:profile', username=username) 
+    return redirect('posts:profile', username=username)
+
 
 @login_required
 def profile_unfollow(request, username):
     get_object_or_404(Follow, user=request.user, author__username=username).delete()
-    return redirect('posts:profile', username=username) 
+    return redirect('posts:profile', username=username)

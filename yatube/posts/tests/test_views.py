@@ -15,14 +15,13 @@ class PostsViewsTests(TestCase):
         cls.group = Group.objects.create(
             title='Тестовая группа',
             slug='test-slug',
-            description='Тестовое описание',
-            )
+            description='Тестовое описание',)
         cls.post = Post.objects.create(
             author=cls.user,
             text='Текст',
             group=cls.group)
-        
-     
+
+
     @classmethod
     def setUp(self):
         self.guest_client = Client()
@@ -51,10 +50,9 @@ class PostsViewsTests(TestCase):
                 kwargs={'post_id': 1}
             ): 'posts/post_create.html',
             reverse('posts:post_create'): 'posts/post_create.html',
-            #reverse('posts:profile_follow'): 'posts/profile.html',
             reverse('posts:follow_index'): 'posts/follow.html',
-                        
         }
+
         for reverse_name, template in templates_pages_names.items():
             with self.subTest(reverse_name=reverse_name):
                 response = self.authorized_client.get(reverse_name)
@@ -149,17 +147,13 @@ class PostsViewsTests(TestCase):
         ))
         self.assertEqual(response.context['post'].text, 'Текст')
 
-
-    
-
     def test_unfollowing_posts(self):
         """Тестирование отсутствия поста автора у нового пользователя."""
         new_user = User.objects.create(username='test_user1')
         authorized_client = Client()
         authorized_client.force_login(new_user)
         response_unfollow = authorized_client.get(
-            reverse('posts:follow_index')
-        )
+            reverse('posts:follow_index'))
         context_unfollow = response_unfollow.context
         self.assertEqual(len(context_unfollow['page_obj']), 0)
 
@@ -172,13 +166,11 @@ class PaginatorViewsTest(TestCase):
         cls.group = Group.objects.create(
             title='Тестовая группа',
             slug='test-slug',
-            description='Тестовое описание',
-        )
+            description='Тестовое описание',)
         Post.objects.bulk_create(
             Post(author=cls.user,
                  group=Group.objects.get(title='Тестовая группа'),
-                 text='Текст1') for _ in range(test_amposts)
-        )
+                 text='Текст1') for _ in range(test_amposts))
 
     def setUp(self):
         self.guest_client = Client()
@@ -282,8 +274,7 @@ class Testfollow(TestCase):
                 kwargs=rev_args
             ),
             data=post_args,
-            follow=fol
-        )
+            follow=fol)
 
     def test_auth_follow_add(self):
         """ Авторизованный пользователь подписывается на других.
@@ -291,12 +282,10 @@ class Testfollow(TestCase):
         following = User.objects.create(username='following')
         self.response_post(
             'posts:profile_follow',
-            rev_args={'username': following}
-        )
+            rev_args={'username': following})
         self.assertIs(
             Follow.objects.filter(user=self.user, author=following).exists(),
-            True
-        )
+            True)
 
     def test_auth_follow_dell(self):
         """ Авторизованный пользователь удаляет из подписок.
@@ -304,12 +293,10 @@ class Testfollow(TestCase):
         following = User.objects.create(username='following')
         self.response_post(
             'posts:profile_unfollow',
-            rev_args={'username': following}
-        )
+            rev_args={'username': following})
         self.assertIs(
             Follow.objects.filter(user=self.user, author=following).exists(),
-            False
-        )
+            False)
 
     def test_new_post(self):
         """ Новая запись появляется в ленте тех, кто подписан.
@@ -328,8 +315,7 @@ class Testfollow(TestCase):
         self.client.logout()
         User.objects.create_user(
             username='testfollow1',
-            password='pass'
-        )
+            password='pass')
         self.client.login(username='testfollow1', password='pass')
         response = self.response_get('posts:follow_index')
         self.assertNotIn(post, response.context['page_obj'].object_list)

@@ -1,4 +1,3 @@
-from enum import unique
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -33,11 +32,10 @@ class Post(models.Model):
     image = models.ImageField(verbose_name='Изображение',
                               upload_to='posts/',
                               blank=True
-                             )
+                              )
 
     class Meta:
         ordering = ['-pub_date']
-        
 
     def __str__(self):
         return self.text[:length]
@@ -50,21 +48,20 @@ class Comment(models.Model):
                                related_name="comments")
     text = models.TextField(verbose_name='Комментарий')
     created = models.DateTimeField('дата публикации', auto_now_add=True)
-    
+
     def __str__(self):
         return self.text[:15]
 
 
 class Follow(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, 
-                             related_name='follower', 
+    user = models.ForeignKey(User, on_delete=models.CASCADE,
+                             related_name='follower',
                              verbose_name='подписчики'
                              )
-    author = models.ForeignKey(User, on_delete=models.CASCADE, 
-                               related_name='following', 
+    author = models.ForeignKey(User, on_delete=models.CASCADE,
+                               related_name='following',
                                verbose_name='автор'
                                )
-    
 
     class Meta:
         unique_together = [['user', 'author']]
