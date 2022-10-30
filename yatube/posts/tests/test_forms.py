@@ -74,6 +74,7 @@ class TaskCreateFormTests(TestCase):
         self.assertEqual(edit_post, self.post)
         self.assertEqual(Post.objects.count(), posts_count)
 
+
 class CommentFormTest(TestCase):
     @classmethod
     def setUpClass(cls):
@@ -90,7 +91,6 @@ class CommentFormTest(TestCase):
             group=cls.group,
         )
         cls.form = PostForm()
-        
 
     def setUp(self) -> None:
         self.authorized_user = Client()

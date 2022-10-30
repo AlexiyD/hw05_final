@@ -21,7 +21,6 @@ class PostsViewsTests(TestCase):
             text='Текст',
             group=cls.group)
 
-
     @classmethod
     def setUp(self):
         self.guest_client = Client()
@@ -182,7 +181,7 @@ class PaginatorViewsTest(TestCase):
         pages_names = [
             reverse('posts:index'),
             reverse('posts:group_posts',
-                kwargs={'slug': 'test-slug'}),
+                    kwargs={'slug': 'test-slug'}),
             reverse(
                 'posts:profile',
                 kwargs={'username': 'test_user'}
