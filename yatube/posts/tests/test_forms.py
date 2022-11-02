@@ -129,4 +129,3 @@ class CommentFormTest(TestCase):
             follow=True
         )
         self.assertEqual(response.status_code, HTTPStatus.OK)
-    

@@ -19,12 +19,12 @@ class TaskModelTest(TestCase):
             text='Тестовый пост))))))))))))))))',
         )
         cls.comment = Comment.objects.create(
-            post = cls.post,
+            post=cls.post,
             author=cls.user,
             text='тестовый комментарий))))))))))))))))',
         )
         cls.follow = Follow.objects.create(
-            user = cls.user,
+            user=cls.user,
             author=cls.user,
         )
 
