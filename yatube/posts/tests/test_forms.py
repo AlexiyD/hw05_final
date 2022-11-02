@@ -93,6 +93,7 @@ class CommentFormTest(TestCase):
         cls.form = PostForm()
 
     def setUp(self) -> None:
+        self.guest_client = Client()
         self.authorized_user = Client()
         self.authorized_user.force_login(self.user)
 
@@ -116,3 +117,16 @@ class CommentFormTest(TestCase):
             author=self.user,
             post=self.post
         ))
+
+    def test_comment_form_guest_create_database_entry(self):
+        form_data = {
+            'text': 'test_comment',
+        }
+        kwargs = {"post_id": self.post.pk}
+        response = self.guest_client.post(
+            reverse('posts:add_comment', kwargs=kwargs),
+            data=form_data,
+            follow=True
+        )
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+    

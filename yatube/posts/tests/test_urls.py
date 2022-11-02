@@ -32,6 +32,7 @@ class PostsURLTests(TestCase):
             'posts/profile.html': '/profile/test_user/',
             'posts/post_detail.html': '/posts/2/',
             'posts/post_create.html': '/posts/2/edit/',
+            'posts/follow.html': '/follow/',
         }
         for template, address in templates_url_names.items():
             with self.subTest(address=address):

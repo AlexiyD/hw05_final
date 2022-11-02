@@ -228,16 +228,13 @@ class CommentFormTests(TestCase):
             'text': 'Текст комментария',
             'post': self.post,
         }
-        # Отправили POST запрос
         response = self.authorized_client.post(
             reverse('posts:add_comment', kwargs={'post_id': self.post.pk}),
             data=form_data
         )
-        # Проверили редирект
         self.assertRedirects(response, reverse(
             'posts:post_detail', kwargs={'post_id': self.post.pk})
         )
-        # Проверили, что коммент создан
         self.assertTrue(
             Comment.objects.filter(
                 text='Текст комментария',
