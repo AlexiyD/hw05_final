@@ -4,7 +4,7 @@
   <b>Пост</b> {{ post.text | truncatechars:30 }}
 {% endblock %}
 {% block content %}
-{% load user_filters %}
+  {% load user_filters %}
   <div class="row">
     <aside class="col-12 col-md-3">
       <ul class="list-group list-group-flush">
@@ -44,7 +44,7 @@
         </a>
       {% endif %}
       {% if user.is_authenticated %}
-       <div class="card my-4">
+        <div class="card my-4">
           <h5 class="card-header">Ваш комментарий:</h5>
           <div class="card-body">
             <form method="post" action="{% url 'posts:add_comment' post.id %}">
@@ -71,6 +71,6 @@
           </div>
         </div>
       {% endfor %}
-  </article>
-</div>
+    </article>
+  </div>
 {% endblock %}

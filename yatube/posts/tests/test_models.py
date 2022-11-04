@@ -34,8 +34,8 @@ class TaskModelTest(TestCase):
     def test_models_have_correct_object_names_group(self):
         self.assertEqual(str(self.group), self.group.title)
 
-    def test_models_have_correct_object_names_Comment(self):
+    def test_models_correct_length_names_comment(self):
         self.assertEqual(str(self.comment), self.comment.text[:length])
 
-    def test_models_have_correct_object_names_Follow(self):
+    def test_models_have_correct_object_names_follow(self):
         self.assertEqual(str(self.follow), self.follow.user.username)

@@ -2,6 +2,8 @@ from django import forms
 from django.test import Client, TestCase
 from django.urls import reverse
 from ..models import Group, Post, User, Comment, Follow
+from django.core.cache import cache
+from http import HTTPStatus
 
 amount_posts: int = 10
 test_amposts: int = 20
@@ -30,6 +32,7 @@ class PostsViewsTests(TestCase):
 
     def test_pages_uses_correct_template(self):
         """URL-адрес использует соответствующий шаблон."""
+        cache.clear()
         templates_pages_names = {
             reverse('posts:index'): 'posts/index.html',
             reverse(
@@ -59,6 +62,7 @@ class PostsViewsTests(TestCase):
 
     def test_pages_guest_client_correct_template(self):
         """URL-адрес использует соответствующий шаблон."""
+        cache.clear()
         templates_pages_names = {
             reverse('posts:index'): 'posts/index.html',
             reverse(
@@ -108,6 +112,7 @@ class PostsViewsTests(TestCase):
 
     def test_index_page_show_correct_context(self):
         """Шаблон index сформирован с правильным контекстом."""
+        cache.clear()
         response = self.authorized_client.get(reverse('posts:index'))
         first_object = response.context['page_obj'][0]
         self.assertEqual(first_object.author, self.user)
@@ -155,6 +160,22 @@ class PostsViewsTests(TestCase):
             reverse('posts:follow_index'))
         context_unfollow = response_unfollow.context
         self.assertEqual(len(context_unfollow['page_obj']), 0)
+    
+    def test_cache_index(self):
+        cache.clear()
+        post_1 = Post.objects.create(author=self.user,
+                                     text='Текст_1')
+        response = self.authorized_client.get(reverse('posts:index'))
+        self.assertEqual(response.context['page_obj'][0].text, post_1.text)
+        post_2 = Post.objects.create(author=self.user,
+                                     text='Текст_2')
+        post_1.delete()
+        response_2 = self.authorized_client.get(reverse('posts:index'))
+        self.assertEqual(response.content, response_2.content)
+        self.assertNotEqual(response.context['page_obj'][0].text, post_2.text)
+        cache.clear()
+        response_3 = self.authorized_client.get(reverse('posts:index'))
+        self.assertEqual(response_3.context['page_obj'][0].text, post_2.text)
 
 
 class PaginatorViewsTest(TestCase):
@@ -178,6 +199,7 @@ class PaginatorViewsTest(TestCase):
         self.authorized_client.force_login(self.user)
 
     def test_pages_contain_required_records(self):
+        cache.clear()
         pages_names = [
             reverse('posts:index'),
             reverse('posts:group_posts',
@@ -219,6 +241,7 @@ class CommentFormTests(TestCase):
         )
 
     def setUp(self):
+        self.guest_client = Client()
         self.authorized_client = Client()
         self.authorized_client.force_login(self.user)
 
@@ -241,10 +264,15 @@ class CommentFormTests(TestCase):
                 post=self.post
             ).exists()
         )
+        response = self.guest_client.post(
+            reverse('posts:add_comment', kwargs={'post_id': self.post.pk}),
+            data=form_data
+        )
+        self.assertFalse(response.status_code==HTTPStatus.OK)
 
 
 class Testfollow(TestCase):
-
+    
     def setUp(self):
         self.client = Client()
         self.user = User.objects.create_user(

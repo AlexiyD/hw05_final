@@ -4,12 +4,12 @@ from .models import Post, Group, User, Follow
 from .forms import PostForm, CommentForm
 from django.shortcuts import redirect
 from django.core.paginator import Paginator
-# from django.views.decorators.cache import cache_page
+from django.views.decorators.cache import cache_page
 
 text_output: int = 10
 
 
-# @cache_page(20, key_prefix='index')
+@cache_page(20, key_prefix='index')
 def index(request):
     template = 'posts/index.html'
     post_list = Post.objects.all()
@@ -58,7 +58,7 @@ def profile(request, username):
     paginator = Paginator(post_list, text_output)
     page_obj = paginator.get_page(page_number)
     following = Follow.objects.filter(user=request.user.id,
-                                      author=profile.id).all()
+                                      author=profile.id).exists()
     context = {
         'following': following,
         'profile': profile,
@@ -72,12 +72,10 @@ def profile(request, username):
 def post_detail(request, post_id):
     template = 'posts/post_detail.html'
     post = get_object_or_404(Post, pk=post_id)
-    post_count = Post.objects.filter()
     comments = post.comments.all()
     form = CommentForm()
     context = {
         'post': post,
-        'post_count': post_count,
         'comments': comments,
         'form': form,
     }

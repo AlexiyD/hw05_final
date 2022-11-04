@@ -1,6 +1,7 @@
 from django.test import TestCase, Client
 from posts.models import Group, Post, User
 from http import HTTPStatus
+from django.core.cache import cache
 
 
 class PostsURLTests(TestCase):
@@ -26,6 +27,7 @@ class PostsURLTests(TestCase):
 
     def test_urls_authorized_correct_template(self):
         """URL-адрес использует соответствующий шаблон."""
+        cache.clear()
         templates_url_names = {
             'posts/index.html': '/',
             'posts/group_list.html': '/group/test-slug/',
@@ -41,6 +43,7 @@ class PostsURLTests(TestCase):
 
     def test_urls_guest_correct_template(self):
         """URL-адрес использует соответствующий шаблон."""
+        cache.clear()
         templates_url_names = {
             'posts/index.html': '/',
             'posts/group_list.html': '/group/test-slug/',
@@ -51,6 +54,11 @@ class PostsURLTests(TestCase):
             with self.subTest(address=address):
                 response = self.guest_client.get(address)
                 self.assertTemplateUsed(response, template)
+
+    
+    def test_guest_user(self):
+        response = self.guest_client.get('/follow/')
+        self.assertNotEqual(response.status_code, HTTPStatus.OK)
 
     def test_create_url_template(self):
         response = self.authorized_client.get('/create/')

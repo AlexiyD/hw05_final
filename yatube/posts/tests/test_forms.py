@@ -118,7 +118,7 @@ class CommentFormTest(TestCase):
             post=self.post
         ))
 
-    def test_comment_form_guest_create_database_entry(self):
+    def test_comment_form_guest_not_create_database_entry(self):
         form_data = {
             'text': 'test_comment',
         }
