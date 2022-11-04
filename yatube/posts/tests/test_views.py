@@ -160,7 +160,7 @@ class PostsViewsTests(TestCase):
             reverse('posts:follow_index'))
         context_unfollow = response_unfollow.context
         self.assertEqual(len(context_unfollow['page_obj']), 0)
-    
+
     def test_cache_index(self):
         cache.clear()
         post_1 = Post.objects.create(author=self.user,
@@ -268,11 +268,10 @@ class CommentFormTests(TestCase):
             reverse('posts:add_comment', kwargs={'post_id': self.post.pk}),
             data=form_data
         )
-        self.assertFalse(response.status_code==HTTPStatus.OK)
+        self.assertFalse(response.status_code == HTTPStatus.OK)
 
 
 class Testfollow(TestCase):
-    
     def setUp(self):
         self.client = Client()
         self.user = User.objects.create_user(

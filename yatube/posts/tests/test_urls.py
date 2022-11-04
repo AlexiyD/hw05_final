@@ -55,7 +55,6 @@ class PostsURLTests(TestCase):
                 response = self.guest_client.get(address)
                 self.assertTemplateUsed(response, template)
 
-    
     def test_guest_user(self):
         response = self.guest_client.get('/follow/')
         self.assertNotEqual(response.status_code, HTTPStatus.OK)
